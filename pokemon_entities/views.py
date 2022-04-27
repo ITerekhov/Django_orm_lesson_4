@@ -63,15 +63,20 @@ def show_pokemon(request, pokemon_id):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
-            img_url
-        )
+            img_url)
     pokemon_info = {
         'title_ru': requested_pokemon.title,
         'title_en': requested_pokemon.title_en,
         'title_jp': requested_pokemon.title_jp,
         'img_url': img_url,
-        'description': requested_pokemon.description
+        'description': requested_pokemon.description,
     }
+    if requested_pokemon.parent:
+        pokemon_info['previous_evolution'] = {
+            'title_ru': requested_pokemon.parent.title,
+            'pokemon_id': requested_pokemon.parent.id,
+            'img_url': request.build_absolute_uri(f'/media/{requested_pokemon.parent.image}')
+        }
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon_info
     })
