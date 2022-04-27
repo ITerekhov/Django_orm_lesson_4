@@ -1,10 +1,10 @@
 import folium
-import json
 
-from django.http import HttpRequest, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Pokemon, PokemonEntity
+from .models import Pokemon
 
 MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = (
@@ -54,7 +54,7 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     try:
         requested_pokemon = Pokemon.objects.get(pk=pokemon_id)
-    except:
+    except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
@@ -63,7 +63,8 @@ def show_pokemon(request, pokemon_id):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
-            img_url)
+            img_url
+        )
     pokemon_info = {
         'title_ru': requested_pokemon.title,
         'title_en': requested_pokemon.title_en,
