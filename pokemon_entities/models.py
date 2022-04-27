@@ -3,7 +3,7 @@ from django.db import models
 class Pokemon(models.Model):
     '''Породы покемонов'''
     title = models.CharField('Имя', max_length=200)
-    image = models.ImageField('Изображение', null=True, blank=True)
+    image = models.ImageField('Изображение')
     description = models.TextField('Описание', blank=True)
     title_en = models.CharField('Имя на англисйком', max_length=200, blank=True)
     title_jp = models.CharField('Имя на японском', max_length=200, blank=True)
