@@ -31,17 +31,17 @@ def show_all_pokemons(request):
     pokemons = Pokemon.objects.all()
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon in pokemons:
-        for pokemon_entity in pokemon.endities.all():
+        for pokemon_entity in pokemon.entities.all():
             add_pokemon(
                 folium_map, pokemon_entity.lat,
                 pokemon_entity.lon,
-                request.build_absolute_uri(f'/media/{pokemon.image}')
+                request.build_absolute_uri(pokemon.image.url)
             )
     pokemons_on_page = []
     for pokemon in pokemons:
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
-            'img_url': request.build_absolute_uri(f'/media/{pokemon.image}'),
+            'img_url': request.build_absolute_uri(pokemon.image.url),
             'title_ru': pokemon.title,
         })
 
@@ -58,8 +58,8 @@ def show_pokemon(request, pokemon_id):
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    img_url = request.build_absolute_uri(f'/media/{requested_pokemon.image}')
-    for pokemon_entity in requested_pokemon.endities.all():
+    img_url = request.build_absolute_uri(requested_pokemon.image.url)
+    for pokemon_entity in requested_pokemon.entities.all():
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
@@ -77,7 +77,7 @@ def show_pokemon(request, pokemon_id):
         pokemon_info['previous_evolution'] = {
             'title_ru': parent.title,
             'pokemon_id': parent.id,
-            'img_url': request.build_absolute_uri(f'/media/{parent.image}')
+            'img_url': request.build_absolute_uri(parent.image.url)
         }
     next_evolution = requested_pokemon.next_evolutions.all()
     if next_evolution:
@@ -85,7 +85,7 @@ def show_pokemon(request, pokemon_id):
         pokemon_info['next_evolution'] = {
             'title_ru': child.title,
             'pokemon_id': child.id,
-            'img_url': request.build_absolute_uri(f'/media/{child.image}')
+            'img_url': request.build_absolute_uri(child.image.url)
         }
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon_info
